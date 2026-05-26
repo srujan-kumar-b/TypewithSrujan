@@ -1,0 +1,2344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypewithSrujan — Typing Speed Test, Tutorials &amp; Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d1117;
+    --bg2: #131a1f;
+    --bg3: #1a2228;
+    --bg4: #222c35;
+    --accent: #e8c547;
+    --accent2: #f0d060;
+    --text: #e8eaf0;
+    --text2: #9097ae;
+    --text3: #5a6178;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --correct: #4ade80;
+    --wrong: #f87171;
+    --radius: 12px;
+    --font-mono: 'Space Mono', monospace;
+    --font-sans: 'DM Sans', sans-serif;
+    --font-serif: 'DM Serif Display', serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: transparent;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── ANIMATED BACKGROUND ── */
+  .bg-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    background: #0d1117;
+  }
+
+  .bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 1;
+    will-change: transform;
+  }
+
+  /* Dark green blob — sweeps left↔right across the screen */
+  .bg-orb-1 {
+    width: 700px; height: 900px;
+    background: radial-gradient(ellipse at center,
+      rgba(20, 110, 55, 0.8) 0%,
+      rgba(15, 80, 38, 0.5) 40%,
+      transparent 70%);
+    top: -5%; left: -15%;
+    animation: sweep1 12s ease-in-out infinite;
+  }
+
+  /* Dark red/maroon blob — sweeps right↔left, opposite phase */
+  .bg-orb-2 {
+    width: 680px; height: 860px;
+    background: radial-gradient(ellipse at center,
+      rgba(130, 20, 25, 0.8) 0%,
+      rgba(95, 12, 18, 0.5) 40%,
+      transparent 70%);
+    top: 0%; right: -15%;
+    animation: sweep2 14s ease-in-out infinite;
+  }
+
+  /* Green — drifts diagonally bottom */
+  .bg-orb-3 {
+    width: 550px; height: 550px;
+    background: radial-gradient(ellipse at center,
+      rgba(18, 95, 45, 0.5) 0%,
+      transparent 65%);
+    bottom: -5%; left: 10%;
+    animation: sweep3 16s ease-in-out infinite;
+  }
+
+  /* Red — drifts diagonally bottom right */
+  .bg-orb-4 {
+    width: 500px; height: 500px;
+    background: radial-gradient(ellipse at center,
+      rgba(100, 18, 22, 0.5) 0%,
+      transparent 65%);
+    bottom: -5%; right: 10%;
+    animation: sweep4 10s ease-in-out infinite;
+  }
+
+  /* Sweep 1: green swings far right then back */
+  @keyframes sweep1 {
+    0%   { transform: translate(0px,    0px)   scale(1);    }
+    25%  { transform: translate(55vw,  80px)   scale(1.1);  }
+    50%  { transform: translate(60vw,  -40px)  scale(0.95); }
+    75%  { transform: translate(25vw,  120px)  scale(1.05); }
+    100% { transform: translate(0px,    0px)   scale(1);    }
+  }
+
+  /* Sweep 2: red swings far left then back */
+  @keyframes sweep2 {
+    0%   { transform: translate(0px,    0px)   scale(1);    }
+    25%  { transform: translate(-55vw, 60px)   scale(1.08); }
+    50%  { transform: translate(-60vw, -50px)  scale(0.94); }
+    75%  { transform: translate(-20vw, 100px)  scale(1.06); }
+    100% { transform: translate(0px,    0px)   scale(1);    }
+  }
+
+  /* Sweep 3: bottom green crosses toward right */
+  @keyframes sweep3 {
+    0%   { transform: translate(0px,   0px)  scale(1);    }
+    33%  { transform: translate(45vw, -60px) scale(1.1);  }
+    66%  { transform: translate(20vw,  40px) scale(0.95); }
+    100% { transform: translate(0px,   0px)  scale(1);    }
+  }
+
+  /* Sweep 4: bottom red crosses toward left */
+  @keyframes sweep4 {
+    0%   { transform: translate(0px,    0px)  scale(1);    }
+    33%  { transform: translate(-40vw, -70px) scale(1.08); }
+    66%  { transform: translate(-15vw,  50px) scale(0.96); }
+    100% { transform: translate(0px,    0px)  scale(1);    }
+  }
+
+  /* all content must sit above bg layers */
+  nav, .hero, section, footer, #test {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8,9,14,0.75);
+    backdrop-filter: blur(20px) saturate(1.4);
+    border-bottom: 1px solid var(--border);
+    height: 60px;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-inner {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-brand {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-brand-icon {
+    width: 30px; height: 30px;
+    background: rgba(74,222,128,0.12);
+    border: 1px solid rgba(74,222,128,0.28);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .nav-brand-text { display: flex; flex-direction: column; gap: 2px; }
+  .nav-brand-name { font-size: 14px; font-weight: 700; line-height: 1; color: var(--text); letter-spacing: -0.01em; }
+  .nav-brand-name .with { color: #4ade80; font-weight: 400; }
+  .nav-brand-sub { font-size: 10px; font-weight: 400; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; line-height: 1; }
+
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid var(--border2);
+    background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    color: var(--text);
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .nav-toggle:hover { border-color: var(--accent); }
+  .nav-toggle:hover .nav-toggle-bar { background: var(--accent); }
+
+  .nav-toggle-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-toggle-bar {
+    width: 18px;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--text);
+    transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+  }
+
+  nav.nav-open .nav-toggle-bar:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  nav.nav-open .nav-toggle-bar:nth-child(2) { opacity: 0; }
+  nav.nav-open .nav-toggle-bar:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+  .nav-best {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text3);
+  }
+  .nav-best b { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 5rem 3rem 2rem;
+    position: relative;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(232,197,71,0.1);
+    border: 1px solid rgba(232,197,71,0.25);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.04em;
+  }
+  .hero h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+  .hero h1 em { color: var(--accent); font-style: normal; }
+  .hero p {
+    color: var(--text2);
+    font-size: 17px;
+    max-width: 640px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.7;
+  }
+
+  /* TEST SECTION */
+  #test {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 3rem 4rem;
+  }
+
+  /* MODE TABS */
+  .mode-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .mode-btn {
+    padding: 6px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    font-size: 13px;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 500;
+  }
+  .mode-btn:hover { border-color: var(--accent); color: var(--text); }
+  .mode-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0d0f14;
+    font-weight: 700;
+  }
+
+  .count-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 1.5rem;
+  }
+  .count-btn {
+    padding: 5px 14px;
+    border-radius: 100px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    font-size: 13px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .count-btn:hover { border-color: var(--accent); color: var(--text); }
+  .count-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    text-align: center;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .stat-value.wpm-val { color: var(--accent); }
+
+  /* TYPING BOX */
+  .typing-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin-bottom: 1rem;
+    position: relative;
+    cursor: text;
+    min-height: 120px;
+    transition: border-color 0.2s;
+  }
+  .typing-box.focused { border-color: rgba(232,197,71,0.3); }
+
+  .words-display {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    line-height: 1.9;
+    color: var(--text3);
+    user-select: none;
+    pointer-events: none;
+    letter-spacing: 0.02em;
+  }
+  .words-display .word { display: inline; }
+  .words-display .char { transition: color 0.05s; }
+  .char.correct { color: var(--correct); }
+  .char.wrong { color: var(--wrong); background: rgba(248,113,113,0.12); border-radius: 2px; }
+  .char.current { color: var(--text); border-bottom: 2px solid var(--accent); }
+
+  .hidden-input {
+    position: absolute;
+    opacity: 0;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    cursor: text;
+  }
+
+  .hint-text {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text3);
+    margin-top: 0.5rem;
+    font-family: var(--font-mono);
+  }
+  .hint-text kbd {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text2);
+  }
+
+  .action-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 1.2rem;
+  }
+  .history-panel,
+  .review-panel,
+  .goal-panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-top: 1rem;
+  }
+  .history-header,
+  .review-title,
+  .goal-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text2);
+    margin-bottom: 0.9rem;
+  }
+  .history-grid,
+  .review-list {
+    display: grid;
+    gap: 10px;
+  }
+  .review-empty,
+  .history-empty {
+    font-size: 13px;
+    color: var(--text3);
+    padding: 0.9rem 1rem;
+    border: 1px dashed var(--border2);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.02);
+  }
+  .review-item,
+  .history-item {
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    background: rgba(255,255,255,0.02);
+  }
+  .review-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.8rem;
+    align-items: start;
+  }
+  .review-index,
+  .history-wpm {
+    font-family: var(--font-mono);
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .review-main {
+    display: grid;
+    gap: 2px;
+  }
+  .review-meta,
+  .history-meta {
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .history-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .history-item {
+    display: grid;
+    gap: 4px;
+  }
+  .history-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .history-kind {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .history-stats {
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .history-date {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .review-panel { margin-top: 1rem; }
+  .review-list { margin-top: 0.75rem; }
+
+  .result-share-card {
+    margin-top: 1rem;
+    border-radius: 20px;
+    border: 1px solid rgba(232,197,71,0.22);
+    background:
+      radial-gradient(circle at top left, rgba(232,197,71,0.22), transparent 42%),
+      linear-gradient(145deg, rgba(232,197,71,0.12), rgba(255,255,255,0.04));
+    padding: 1rem;
+    text-align: left;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.18);
+  }
+
+  .share-card-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .share-brand {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .share-brand-mark {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(145deg, rgba(232,197,71,0.24), rgba(255,255,255,0.04));
+    border: 1px solid rgba(232,197,71,0.25);
+    color: var(--accent);
+    font-size: 19px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.16);
+    flex: 0 0 auto;
+  }
+
+  .share-card-title {
+    margin-top: 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .share-card-kicker {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 0.1rem;
+  }
+
+  .share-card-pill {
+    font-size: 11px;
+    padding: 0.45rem 0.65rem;
+    border-radius: 999px;
+    background: rgba(232,197,71,0.15);
+    border: 1px solid rgba(232,197,71,0.2);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .share-card-label {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .share-card-body {
+    display: grid;
+    gap: 8px;
+  }
+
+  .share-card-cover {
+    border-radius: 18px;
+    padding: 1rem;
+    background:
+      linear-gradient(160deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+      rgba(0,0,0,0.16);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .share-card-cover strong {
+    display: block;
+    font-size: 1.8rem;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .share-card-cover span {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 12px;
+    color: var(--text3);
+  }
+
+  .share-card-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 0.5rem;
+  }
+
+  .share-metric {
+    background: rgba(0,0,0,0.18);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 0.7rem 0.75rem;
+  }
+
+  .share-metric span {
+    display: block;
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+  }
+
+  .share-metric strong {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    color: var(--text);
+  }
+
+  .share-card-actions,
+  .goal-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 0.9rem;
+  }
+
+  .share-card-actions .btn {
+    flex: 1 1 140px;
+  }
+
+  .goal-panel {
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .goal-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .goal-streak {
+    display: grid;
+    gap: 2px;
+  }
+
+  .goal-streak strong {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    color: var(--accent);
+  }
+
+  .goal-streak span,
+  .goal-help {
+    font-size: 12px;
+    color: var(--text3);
+  }
+
+  .goal-progress {
+    height: 10px;
+    background: var(--bg3);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid var(--border2);
+  }
+
+  .goal-progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.25s ease;
+  }
+
+  .goal-input {
+    width: 88px;
+    border-radius: 12px;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text);
+    padding: 0.65rem 0.8rem;
+    font: inherit;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 22px;
+    border-radius: 100px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--text); }
+  .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0d0f14;
+    font-weight: 700;
+  }
+  .btn.primary:hover { background: var(--accent2); }
+
+  /* LAP PANEL — paragraph mode */
+  .lap-panel {
+    display: none;
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+  .lap-panel.visible { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .lap-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .lap-card.done { border-color: rgba(74,222,128,0.3); }
+  .lap-card.active { border-color: rgba(232,197,71,0.4); }
+  .lap-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .lap-label {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+  }
+  .lap-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .lap-badge.waiting { background: rgba(255,255,255,0.05); color: var(--text3); }
+  .lap-badge.running { background: rgba(232,197,71,0.15); color: var(--accent); }
+  .lap-badge.done    { background: rgba(74,222,128,0.12); color: #4ade80; }
+  .lap-wpm {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text3);
+    line-height: 1;
+    transition: color 0.3s;
+  }
+  .lap-wpm.done { color: #4ade80; }
+  .lap-wpm.active { color: var(--accent); }
+  .lap-sub {
+    font-size: 12px;
+    color: var(--text3);
+    display: flex;
+    gap: 10px;
+  }
+  .lap-sub span b { color: var(--text2); }
+  .lap-progress {
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: width 0.5s linear;
+    width: 0%;
+  }
+  .lap-card.done .lap-progress { background: #4ade80; width: 100%; }
+
+  /* RESULTS OVERLAY */
+  .result-overlay {
+    display: none;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 3rem 2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.3s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .result-overlay.show { display: block; }
+
+  .result-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .result-wpm-block { text-align: center; }
+  .result-wpm {
+    font-family: var(--font-mono);
+    font-size: 6rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .result-wpm-label {
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+  .result-divider {
+    width: 1px;
+    height: 70px;
+    background: var(--border2);
+    flex-shrink: 0;
+  }
+  .result-stats {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .result-stat {
+    text-align: center;
+    min-width: 70px;
+  }
+  .result-stat-val {
+    font-family: var(--font-mono);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+  .result-stat-label {
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+  .result-message {
+    font-size: 14px;
+    color: var(--text2);
+    margin-bottom: 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .result-message b { color: var(--accent); }
+
+  /* SECTIONS */
+  section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 4rem 3rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-eyebrow {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+  .section-sub {
+    color: var(--text2);
+    font-size: 16px;
+    margin-bottom: 2.5rem;
+    max-width: 560px;
+  }
+
+  /* LESSONS */
+  .lessons-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .lesson-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .lesson-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .lesson-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    margin-bottom: 0.5rem;
+  }
+  .lesson-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+  .lesson-desc { font-size: 13px; color: var(--text2); margin-bottom: 1rem; line-height: 1.6; }
+  .lesson-bullets { list-style: none; }
+  .lesson-bullets li {
+    font-size: 13px;
+    color: var(--text2);
+    padding: 3px 0;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .lesson-bullets li::before { content: '→'; color: var(--accent); flex-shrink: 0; }
+
+  /* TIPS */
+  .tips-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .tip-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: border-color 0.2s;
+  }
+  .tip-card:hover { border-color: rgba(232,197,71,0.3); }
+  .tip-icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
+  .tip-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
+  .tip-body { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+  /* KEYBOARD */
+  .keyboard-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  .kb-row {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+    justify-content: center;
+  }
+  .key {
+    min-width: 38px;
+    height: 38px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    border: 1px solid rgba(255,255,255,0.08);
+    position: relative;
+    cursor: default;
+    transition: transform 0.1s;
+  }
+  .key:hover { transform: translateY(-2px); }
+  .key.space { width: 280px; min-width: unset; }
+  .key.f0 { background: rgba(130,110,200,0.2); color: #c4b5fd; border-color: rgba(167,139,250,0.3); }
+  .key.f1 { background: rgba(45,180,140,0.15); color: #6ee7b7; border-color: rgba(110,231,183,0.3); }
+  .key.f2 { background: rgba(250,170,60,0.15); color: #fcd34d; border-color: rgba(252,211,77,0.3); }
+  .key.f3 { background: rgba(240,90,90,0.15); color: #fca5a5; border-color: rgba(252,165,165,0.3); }
+  .key.f4 { background: rgba(80,150,255,0.15); color: #93c5fd; border-color: rgba(147,197,253,0.3); }
+  .key.neutral { background: var(--bg3); color: var(--text3); }
+  .key.spacebar { background: var(--bg3); color: var(--text2); }
+
+  .kb-legend {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1rem;
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; vertical-align: middle;
+  }
+
+  /* BENCHMARKS */
+  .benchmarks {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+  @media (max-width: 600px) { .benchmarks { grid-template-columns: repeat(2, 1fr); } }
+  .bench-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+  .bench-card:hover { border-color: rgba(232,197,71,0.3); }
+  .bench-tier { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .bench-range { font-family: var(--font-mono); font-size: 19px; color: var(--accent); font-weight: 700; }
+  .bench-unit { font-size: 11px; color: var(--text3); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+
+  /* FAQ */
+  .faq-list { display: flex; flex-direction: column; gap: 0; }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+  }
+  .faq-q {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 0;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 500;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    text-align: left;
+    gap: 1rem;
+  }
+  .faq-q:hover { color: var(--accent); }
+  .faq-icon {
+    font-size: 18px;
+    color: var(--text3);
+    flex-shrink: 0;
+    transition: transform 0.25s;
+  }
+  .faq-item.open .faq-icon { transform: rotate(45deg); color: var(--accent); }
+  .faq-a {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.7;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s;
+  }
+  .faq-item.open .faq-a { max-height: 200px; padding-bottom: 1rem; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    color: var(--text3);
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+
+  @media (max-width: 900px) {
+    .lessons-grid { grid-template-columns: repeat(2, 1fr); }
+    .tips-grid { grid-template-columns: repeat(2, 1fr); }
+    #test { padding: 0 2rem 4rem; }
+    section { padding: 3rem 2rem; }
+    .nav-inner { padding: 0 2rem; }
+  }
+
+  @media (max-width: 640px) {
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .history-grid {
+      grid-template-columns: 1fr;
+    }
+    nav { height: auto; overflow: visible; }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      position: relative;
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+    .nav-brand { min-width: 0; }
+    .nav-brand-sub { display: none; }
+    .nav-brand-name { font-size: 13px; }
+    .nav-toggle { display: inline-flex; }
+    .nav-best { display: none; }
+    .nav-links {
+      display: none;
+      width: 100%;
+      position: absolute;
+      left: 1rem;
+      right: 1rem;
+      top: calc(100% + 0.5rem);
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 0.75rem;
+      background: rgba(8,9,14,0.96);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+      backdrop-filter: blur(18px) saturate(1.3);
+      z-index: 120;
+    }
+    nav.nav-open .nav-links { display: flex; }
+    nav.nav-open .nav-best {
+      display: none;
+    }
+    .nav-links li { width: 100%; }
+    .nav-links a {
+      display: block;
+      width: 100%;
+      padding: 0.8rem 0.9rem;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .nav-links a:hover { background: rgba(232,197,71,0.08); }
+    .words-display { font-size: 15px; }
+    .lessons-grid { grid-template-columns: 1fr; }
+    .tips-grid { grid-template-columns: 1fr; }
+    #test { padding: 0 1rem 3rem; }
+    section { padding: 2.5rem 1rem; }
+    .nav-inner { padding: 0 1rem; }
+    .hero { padding: 3.5rem 1rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ANIMATED BACKGROUND -->
+<div class="bg-canvas" aria-hidden="true">
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+  <div class="bg-orb bg-orb-4"></div>
+</div>
+
+<!-- NAV -->
+<nav id="top">
+  <div class="nav-inner">
+    <a href="#top" class="nav-brand">
+      <div class="nav-brand-icon">⌨</div>
+      <div class="nav-brand-text">
+        <div class="nav-brand-name">Type<span class="with">with</span>Srujan</div>
+        <div class="nav-brand-sub">Speed · Accuracy · Mastery</div>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#test">Test</a></li>
+      <li><a href="#tutorials">Tutorials</a></li>
+      <li><a href="#tips">Tips</a></li>
+      <li><a href="#keyboard">Keyboard</a></li>
+    </ul>
+    <div class="nav-best">Best: <b id="best-wpm">0</b> wpm</div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Open navigation menu" aria-expanded="false">
+      <span class="nav-toggle-bars" aria-hidden="true">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">⚡ Single-page typing studio</div>
+  <h1>Type <em>faster.</em> Type <em>sharper.</em></h1>
+  <p>A beautiful speed test, lessons, and live stats — everything you need to master the keyboard, all in one place.</p>
+</div>
+
+<!-- TEST -->
+<section id="test" style="border-top: none; padding-top: 0;">
+  <div class="mode-row">
+    <button class="mode-btn active" data-mode="words">words</button>
+    <button class="mode-btn" data-mode="time">time</button>
+    <button class="mode-btn" data-mode="sentence">sentence</button>
+    <button class="mode-btn" data-mode="paragraph">paragraph</button>
+  </div>
+  <div class="count-row" id="count-row">
+    <button class="count-btn active" data-count="10">10</button>
+    <button class="count-btn" data-count="25">25</button>
+    <button class="count-btn" data-count="50">50</button>
+    <button class="count-btn" data-count="100">100</button>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-label">WPM</div>
+      <div class="stat-value wpm-val" id="stat-wpm">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Accuracy</div>
+      <div class="stat-value" id="stat-acc">100%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Time</div>
+      <div class="stat-value" id="stat-time">0.0s</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Chars</div>
+      <div class="stat-value" id="stat-chars">0/0</div>
+    </div>
+  </div>
+
+  <div class="typing-box" id="typing-box">
+    <div class="words-display" id="words-display"></div>
+    <input type="text" class="hidden-input" id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  </div>
+  <div class="hint-text">Click the text or press any key to start. <kbd>Tab</kbd> then <kbd>Enter</kbd> shortcut coming soon.</div>
+
+  <!-- LAP PANEL (paragraph mode only) -->
+  <div class="lap-panel" id="lap-panel">
+    <div class="lap-card" id="lap-1">
+      <div class="lap-card-header">
+        <div class="lap-label">1 Minute</div>
+        <div class="lap-badge waiting" id="lap-badge-1">Waiting</div>
+      </div>
+      <div class="lap-wpm" id="lap-wpm-1">—</div>
+      <div class="lap-sub"><span>WPM at 60s</span></div>
+      <div class="lap-progress" id="lap-prog-1"></div>
+    </div>
+    <div class="lap-card" id="lap-2">
+      <div class="lap-card-header">
+        <div class="lap-label">2 Minutes</div>
+        <div class="lap-badge waiting" id="lap-badge-2">Waiting</div>
+      </div>
+      <div class="lap-wpm" id="lap-wpm-2">—</div>
+      <div class="lap-sub"><span>WPM at 120s</span></div>
+      <div class="lap-progress" id="lap-prog-2"></div>
+    </div>
+    <div class="lap-card" id="lap-3">
+      <div class="lap-card-header">
+        <div class="lap-label">3 Minutes</div>
+        <div class="lap-badge waiting" id="lap-badge-3">Waiting</div>
+      </div>
+      <div class="lap-wpm" id="lap-wpm-3">—</div>
+      <div class="lap-sub"><span>WPM at 180s</span></div>
+      <div class="lap-progress" id="lap-prog-3"></div>
+    </div>
+  </div>
+  <div class="result-overlay" id="result-overlay">
+    <div class="result-top">
+      <div class="result-wpm-block">
+        <div class="result-wpm" id="result-wpm-val">0</div>
+        <div class="result-wpm-label">Words per minute</div>
+      </div>
+      <div class="result-divider"></div>
+      <div class="result-stats">
+        <div class="result-stat">
+          <div class="result-stat-val" id="res-acc">0%</div>
+          <div class="result-stat-label">Accuracy</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-val" id="res-time">0s</div>
+          <div class="result-stat-label">Time</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-val" id="res-chars">0/0</div>
+          <div class="result-stat-label">Chars</div>
+        </div>
+      </div>
+    </div>
+    <div class="result-message">Great run! Press <b>Restart</b> to go again or <b>New Test</b> for fresh words.</div>
+    <div class="result-share-card">
+      <div class="share-card-top">
+        <div class="share-brand">
+          <div class="share-brand-mark">⌨</div>
+          <div>
+            <div class="share-card-kicker">Shareable Results</div>
+            <div class="share-card-title">TypewithSrujan</div>
+          </div>
+        </div>
+        <div class="share-card-pill" id="share-date">Now</div>
+      </div>
+      <div class="share-card-body">
+        <div class="share-card-cover">
+          <strong>Ready to post</strong>
+          <span>Clean result snapshot, branded for quick sharing.</span>
+        </div>
+        <div class="share-card-metrics">
+          <div class="share-metric"><span>WPM</span><strong id="share-wpm">0</strong></div>
+          <div class="share-metric"><span>Accuracy</span><strong id="share-acc">0%</strong></div>
+          <div class="share-metric"><span>Time</span><strong id="share-time">0s</strong></div>
+        </div>
+      </div>
+      <div class="share-card-actions">
+        <button class="btn primary" id="share-copy-btn" type="button">Copy result</button>
+        <button class="btn" id="share-native-btn" type="button">Share image</button>
+        <button class="btn" id="share-download-btn" type="button">Download PNG</button>
+      </div>
+    </div>
+    <div class="review-panel">
+      <div class="review-title">Mistake Review</div>
+      <div class="review-empty" id="review-empty">Finish a run to see the first missed characters here.</div>
+      <div class="review-list" id="review-list"></div>
+    </div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn" id="restart-btn">↻ Restart</button>
+    <button class="btn primary" id="new-test-btn">New Test</button>
+    <button class="btn" id="learn-btn" onclick="document.getElementById('tutorials').scrollIntoView({behavior:'smooth'})">Learn</button>
+  </div>
+</section>
+
+<!-- HISTORY -->
+<section id="history">
+  <div class="section-eyebrow">Progress</div>
+  <div class="section-title">Recent Runs</div>
+  <div class="section-sub">Your last few tests, saved locally so you can track improvement over time.</div>
+  <div class="history-grid" id="history-grid"></div>
+
+  <div class="goal-panel" id="goal-panel">
+    <div class="goal-title">Daily Goal & Streak</div>
+    <div class="goal-row">
+      <div class="goal-streak">
+        <strong id="streak-value">0</strong>
+        <span id="streak-label">day streak</span>
+      </div>
+      <div class="goal-actions">
+        <label style="display:flex; align-items:center; gap:8px; color:var(--text2); font-size:13px;">
+          Daily goal
+          <input class="goal-input" id="goal-input" type="number" min="1" max="50" step="1">
+        </label>
+      </div>
+    </div>
+    <div class="goal-progress" aria-label="Daily goal progress">
+      <div class="goal-progress-fill" id="goal-progress-fill"></div>
+    </div>
+    <div class="goal-help" id="goal-help">0 of 0 tests completed today.</div>
+  </div>
+</section>
+
+<!-- TUTORIALS -->
+<section id="tutorials">
+  <div class="section-eyebrow">Learn</div>
+  <div class="section-title">Tutorials &amp; Lessons</div>
+  <div class="section-sub">Progress from posture to pro speed with focused micro-lessons.</div>
+  <div class="lessons-grid">
+    <div class="lesson-card">
+      <div class="lesson-num">Lesson 01</div>
+      <div class="lesson-title">Home Row Foundation</div>
+      <div class="lesson-desc">Anchor your fingers on ASDF and JKL; — every key is just a small movement away.</div>
+      <ul class="lesson-bullets">
+        <li>Index on F and J (feel the bumps)</li>
+        <li>Eyes off the keyboard</li>
+        <li>Rest wrists, float fingers</li>
+      </ul>
+    </div>
+    <div class="lesson-card">
+      <div class="lesson-num">Lesson 02</div>
+      <div class="lesson-title">Top &amp; Bottom Rows</div>
+      <div class="lesson-desc">Reach up to QWERTY and down to ZXCVB without losing home position.</div>
+      <ul class="lesson-bullets">
+        <li>Return to home after every reach</li>
+        <li>Practice common bigrams: th, in, er</li>
+        <li>Use the correct finger every time</li>
+      </ul>
+    </div>
+    <div class="lesson-card">
+      <div class="lesson-num">Lesson 03</div>
+      <div class="lesson-title">Numbers &amp; Symbols</div>
+      <div class="lesson-desc">Train the number row and shifted symbols last — they're slow for everyone.</div>
+      <ul class="lesson-bullets">
+        <li>Glance, don't stare</li>
+        <li>Use right Shift for left-hand symbols</li>
+        <li>Drill phone numbers and dates</li>
+      </ul>
+    </div>
+    <div class="lesson-card">
+      <div class="lesson-num">Lesson 04</div>
+      <div class="lesson-title">Rhythm Over Speed</div>
+      <div class="lesson-desc">A steady beat beats bursty typing. Aim for even key intervals.</div>
+      <ul class="lesson-bullets">
+        <li>Type to a metronome at 80 bpm</li>
+        <li>Smooth, not fast</li>
+        <li>Slow down through hard words</li>
+      </ul>
+    </div>
+    <div class="lesson-card">
+      <div class="lesson-num">Lesson 05</div>
+      <div class="lesson-title">Accuracy First</div>
+      <div class="lesson-desc">Speed without accuracy is wasted motion. Push for 97%+ before chasing wpm.</div>
+      <ul class="lesson-bullets">
+        <li>Backspace is a tax</li>
+        <li>Pause, don't panic</li>
+        <li>Re-read the word before typing</li>
+      </ul>
+    </div>
+    <div class="lesson-card">
+      <div class="lesson-num">Lesson 06</div>
+      <div class="lesson-title">Real-World Drills</div>
+      <div class="lesson-desc">Practice on text you'll actually type: emails, code, essays.</div>
+      <ul class="lesson-bullets">
+        <li>Copy your own writing</li>
+        <li>Type a paragraph from a book</li>
+        <li>Practice 10 minutes daily</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TIPS -->
+<section id="tips">
+  <div class="section-eyebrow">Improve</div>
+  <div class="section-title">Pro Tips for Real Speed</div>
+  <div class="section-sub">The compounding habits that separate 40 wpm from 100+.</div>
+  <div class="tips-grid">
+    <div class="tip-card">
+      <div class="tip-icon">🧘</div>
+      <div class="tip-title">Posture matters</div>
+      <div class="tip-body">Feet flat, back straight, screen at eye level. Tension in shoulders kills speed.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">👀</div>
+      <div class="tip-title">Never look down</div>
+      <div class="tip-body">Cover your hands with a cloth for a week. Painful at first, transformative after.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">⚡</div>
+      <div class="tip-title">Warm up</div>
+      <div class="tip-body">Two minutes of slow accurate typing before any test. Cold fingers miss keys.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🎯</div>
+      <div class="tip-title">Accuracy &gt; speed</div>
+      <div class="tip-body">Speed is a side-effect of accuracy. Optimize the right metric.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🛑</div>
+      <div class="tip-title">Take breaks</div>
+      <div class="tip-body">Micro-breaks every 20 minutes. Your tendons will thank you in ten years.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">📈</div>
+      <div class="tip-title">Track progress</div>
+      <div class="tip-body">Log your best WPM weekly. Small wins compound into massive gains.</div>
+    </div>
+  </div>
+</section>
+
+<!-- KEYBOARD -->
+<section id="keyboard">
+  <div class="section-eyebrow">Reference</div>
+  <div class="section-title">Home Row &amp; Finger Zones</div>
+  <div class="section-sub">Color-coded keyboard guide for proper finger placement.</div>
+
+  <div class="keyboard-wrap">
+    <div class="kb-row">
+      <div class="key neutral">`</div>
+      <div class="key neutral">1</div>
+      <div class="key neutral">2</div>
+      <div class="key neutral">3</div>
+      <div class="key neutral">4</div>
+      <div class="key neutral">5</div>
+      <div class="key neutral">6</div>
+      <div class="key neutral">7</div>
+      <div class="key neutral">8</div>
+      <div class="key neutral">9</div>
+      <div class="key neutral">0</div>
+      <div class="key neutral">-</div>
+      <div class="key neutral">=</div>
+    </div>
+    <div class="kb-row">
+      <div class="key f0">Q</div>
+      <div class="key f1">W</div>
+      <div class="key f2">E</div>
+      <div class="key f3">R</div>
+      <div class="key f3">T</div>
+      <div class="key f3">Y</div>
+      <div class="key f3">U</div>
+      <div class="key f2">I</div>
+      <div class="key f1">O</div>
+      <div class="key f0">P</div>
+      <div class="key neutral">[</div>
+      <div class="key neutral">]</div>
+    </div>
+    <div class="kb-row">
+      <div class="key f0" style="min-width:44px">A</div>
+      <div class="key f1">S</div>
+      <div class="key f2">D</div>
+      <div class="key f3" style="border: 2px solid rgba(240,208,96,0.5);">F</div>
+      <div class="key f3">G</div>
+      <div class="key f3">H</div>
+      <div class="key f3" style="border: 2px solid rgba(240,208,96,0.5);">J</div>
+      <div class="key f2">K</div>
+      <div class="key f1">L</div>
+      <div class="key f0">;</div>
+      <div class="key f0">'</div>
+    </div>
+    <div class="kb-row">
+      <div class="key f0">Z</div>
+      <div class="key f1">X</div>
+      <div class="key f2">C</div>
+      <div class="key f3">V</div>
+      <div class="key f3">B</div>
+      <div class="key f3">N</div>
+      <div class="key f3">M</div>
+      <div class="key f2">,</div>
+      <div class="key f1">.</div>
+      <div class="key f0">/</div>
+    </div>
+    <div class="kb-row">
+      <div class="key spacebar space">Space (thumbs)</div>
+    </div>
+    <div class="kb-legend">
+      <span><span class="legend-dot" style="background:#c4b5fd"></span>Pinky</span>
+      <span><span class="legend-dot" style="background:#6ee7b7"></span>Ring</span>
+      <span><span class="legend-dot" style="background:#fcd34d"></span>Middle</span>
+      <span><span class="legend-dot" style="background:#fca5a5"></span>Index</span>
+      <span><span class="legend-dot" style="background:#93c5fd"></span>Thumb</span>
+    </div>
+  </div>
+
+  <!-- BENCHMARKS -->
+  <div class="section-eyebrow" style="margin-top: 3rem;">Benchmarks</div>
+  <div class="section-title" style="font-size: 1.6rem;">Where do you stand?</div>
+  <div class="section-sub">Words per minute, demystified.</div>
+  <div class="benchmarks">
+    <div class="bench-card">
+      <div class="bench-tier">Beginner</div>
+      <div class="bench-range">0–30</div>
+      <div class="bench-unit">wpm</div>
+    </div>
+    <div class="bench-card">
+      <div class="bench-tier">Average</div>
+      <div class="bench-range">30–50</div>
+      <div class="bench-unit">wpm</div>
+    </div>
+    <div class="bench-card">
+      <div class="bench-tier">Fast</div>
+      <div class="bench-range">50–80</div>
+      <div class="bench-unit">wpm</div>
+    </div>
+    <div class="bench-card" style="border-color: rgba(232,197,71,0.4);">
+      <div class="bench-tier" style="color: var(--accent);">Pro</div>
+      <div class="bench-range">80+</div>
+      <div class="bench-unit">wpm</div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section-eyebrow" style="margin-top: 3rem;">FAQ</div>
+  <div class="section-title" style="font-size: 1.6rem;">Common questions</div>
+  <div class="faq-list" style="margin-top: 1.5rem;">
+    <div class="faq-item">
+      <button class="faq-q">What is a good WPM? <span class="faq-icon">+</span></button>
+      <div class="faq-a">30–40 is average. 60+ is fast. 80+ puts you in the top tier. Most pros sit around 90–120.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">How is WPM calculated? <span class="faq-icon">+</span></button>
+      <div class="faq-a">Standard formula: (correct characters ÷ 5) ÷ minutes elapsed. Five characters equals one 'word.'</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Should I touch-type? <span class="faq-icon">+</span></button>
+      <div class="faq-a">Yes. Touch typing — without looking — is the single biggest unlock. Worth a painful week to learn.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">How often should I practice? <span class="faq-icon">+</span></button>
+      <div class="faq-a">10–15 focused minutes daily beats an hour once a week. Consistency wins.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Is my data saved? <span class="faq-icon">+</span></button>
+      <div class="faq-a">Only your best WPM, stored locally in your browser. Nothing leaves your device.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>© 2026 TypewithSrujan — Built for typists, by typists.</div>
+  <div>Made with ⌨ and ☕</div>
+</footer>
+
+<script>
+// ── WORD BANKS ──
+const WORD_BANKS = {
+  words: ["me","to","you","we","both","from","through","which","all","they","very","then","is","there","may","time","if","between","when","back","what","men","that","the","of","and","a","in","it","his","I","was","he","with","on","at","by","not","be","or","but","have","an","this","had","are","as","so","said","her","she","do","my","can","who","would","been","will","one","more","out","your","about","up","go","them","did","than","like","just","now","look","come","its","after","over","think","also","know","well","our","last","never","here","people","into","year","see","their","good","some","could","him","take","how","way","first","want","make","these","use","such","get","two","been","has","made","day"],
+  sentence: [
+    "the quick brown fox jumps over the lazy dog",
+    "all that glitters is not gold but it shines bright",
+    "practice makes perfect when you are consistent every single day",
+    "typing speed improves naturally with focused daily practice sessions",
+    "accuracy matters more than raw speed when building typing habits",
+    "keep your eyes on the screen and your fingers on the keys",
+    "a smooth typist does not rush but flows through each word effortlessly",
+  ],
+  paragraph: [
+    "touch typing is the ability to type without looking at the keyboard. it is a skill that takes time to develop but pays off enormously over a lifetime. the key is to trust your muscle memory and resist the urge to glance down. start slow, stay accurate, and let speed emerge naturally over weeks of practice. consistency is everything when building a new habit. even ten minutes a day will produce remarkable results over a few months of dedicated effort and focus.",
+    "the fastest typists in the world do not think about individual keys. they think in words and phrases. the brain learns to chunk letters together into familiar patterns. this is why common words feel automatic while unusual combinations slow you down. build your vocabulary of typed words and your speed will climb steadily. the goal is to make every common word feel as natural as breathing so your fingers move without conscious thought.",
+    "good posture is the foundation of fast and pain free typing. sit with your back straight, feet flat on the floor, and wrists hovering lightly above the keyboard. tension in your shoulders or arms will slow you down and cause injury over time. take short breaks every twenty minutes to stretch your fingers and reset your posture. your body is the instrument and it needs care just like any other tool you rely on every single day.",
+  ],
+  time: null
+};
+
+// ── LAP CONFIG ──
+const LAP_SECONDS = [60, 120, 180]; // 1 min, 2 min, 3 min
+
+// ── STATE ──
+let state = {
+  mode: 'words',
+  count: 25,
+  flatText: '',
+  charIndex: 0,
+  totalChars: 0,
+  correctChars: 0,
+  wrongChars: 0,
+  started: false,
+  finished: false,
+  startTime: null,
+  timerInterval: null,
+  bestWpm: parseInt(localStorage.getItem('tw_best') || '0'),
+  // lap state
+  laps: [null, null, null], // WPM snapshot at each lap
+  lapCorrectAtMark: [0, 0, 0], // correct chars at each lap moment
+  lapAccAtMark: [0, 0, 0],
+};
+
+// ── DOM ──
+const display     = document.getElementById('words-display');
+const hiddenInput = document.getElementById('hidden-input');
+const typingBox   = document.getElementById('typing-box');
+const statWpm     = document.getElementById('stat-wpm');
+const statAcc     = document.getElementById('stat-acc');
+const statTime    = document.getElementById('stat-time');
+const statChars   = document.getElementById('stat-chars');
+const resultOverlay  = document.getElementById('result-overlay');
+const resultWpmVal   = document.getElementById('result-wpm-val');
+const resAcc      = document.getElementById('res-acc');
+const resTime     = document.getElementById('res-time');
+const resChars    = document.getElementById('res-chars');
+const bestWpmEl   = document.getElementById('best-wpm');
+const lapPanel    = document.getElementById('lap-panel');
+const reviewEmpty = document.getElementById('review-empty');
+const reviewList = document.getElementById('review-list');
+const historyGrid = document.getElementById('history-grid');
+const shareWpm = document.getElementById('share-wpm');
+const shareAcc = document.getElementById('share-acc');
+const shareTime = document.getElementById('share-time');
+const shareDate = document.getElementById('share-date');
+const shareCopyBtn = document.getElementById('share-copy-btn');
+const shareNativeBtn = document.getElementById('share-native-btn');
+const shareDownloadBtn = document.getElementById('share-download-btn');
+const streakValue = document.getElementById('streak-value');
+const streakLabel = document.getElementById('streak-label');
+const goalInput = document.getElementById('goal-input');
+const goalProgressFill = document.getElementById('goal-progress-fill');
+const goalHelp = document.getElementById('goal-help');
+
+const HISTORY_KEY = 'tw_history';
+const TRACKER_KEY = 'tw_tracker';
+
+const DEFAULT_TRACKER = {
+  goal: 5,
+  streak: 0,
+  lastActiveDate: '',
+  todayCount: 0,
+};
+
+let tracker = loadTracker();
+
+function loadTracker() {
+  try {
+    const loaded = { ...DEFAULT_TRACKER, ...JSON.parse(localStorage.getItem(TRACKER_KEY) || '{}') };
+    if (loaded.lastActiveDate !== dateKey()) loaded.todayCount = 0;
+    return loaded;
+  } catch {
+    return { ...DEFAULT_TRACKER };
+  }
+}
+
+function saveTracker() {
+  localStorage.setItem(TRACKER_KEY, JSON.stringify(tracker));
+}
+
+function dateKey(date = new Date()) {
+  return date.toISOString().slice(0, 10);
+}
+
+function yesterdayKey() {
+  const date = new Date();
+  date.setDate(date.getDate() - 1);
+  return dateKey(date);
+}
+
+function updateTrackerUI() {
+  streakValue.textContent = tracker.streak;
+  streakLabel.textContent = tracker.streak === 1 ? 'day streak' : 'day streak';
+  const pct = Math.min(100, (tracker.todayCount / Math.max(1, tracker.goal)) * 100);
+  goalProgressFill.style.width = pct + '%';
+  goalHelp.textContent = `${tracker.todayCount} of ${tracker.goal} tests completed today.`;
+  goalInput.value = tracker.goal;
+}
+
+function renderHistory() {
+  const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+  historyGrid.innerHTML = '';
+
+  if (!history.length) {
+    historyGrid.innerHTML = '<div class="history-empty">Run a test and your recent sessions will appear here.</div>';
+    return;
+  }
+
+  history.slice(0, 6).forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'history-item';
+    el.innerHTML = `
+      <div class="history-top">
+        <div class="history-kind">${item.mode} mode</div>
+        <div class="history-wpm">${item.wpm} WPM</div>
+      </div>
+      <div class="history-stats">Accuracy ${item.acc}% · ${item.time}s · ${item.chars} chars</div>
+      <div class="history-date">${new Date(item.at).toLocaleString()}</div>
+    `;
+    historyGrid.appendChild(el);
+  });
+}
+
+function renderReview(errors) {
+  reviewList.innerHTML = '';
+  if (!errors.length) {
+    reviewEmpty.style.display = 'block';
+    return;
+  }
+
+  reviewEmpty.style.display = 'none';
+  errors.slice(0, 8).forEach((entry, index) => {
+    const item = document.createElement('div');
+    item.className = 'review-item';
+    item.innerHTML = `
+      <div class="review-index">#${index + 1}</div>
+      <div class="review-main">
+        <div><b>Expected:</b> ${entry.expected === ' ' ? 'space' : entry.expected}</div>
+        <div><b>Typed:</b> ${entry.typed === ' ' ? 'space' : entry.typed}</div>
+        <div class="review-meta">Position ${entry.index + 1}</div>
+      </div>
+    `;
+    reviewList.appendChild(item);
+  });
+}
+
+function saveRun(session) {
+  const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+  history.unshift(session);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 6)));
+  renderHistory();
+}
+
+function updateTrackerOnComplete() {
+  const today = dateKey();
+  if (tracker.lastActiveDate === today) {
+    tracker.todayCount += 1;
+  } else if (tracker.lastActiveDate === yesterdayKey()) {
+    tracker.streak += 1;
+    tracker.todayCount = 1;
+  } else {
+    tracker.streak = 1;
+    tracker.todayCount = 1;
+  }
+  tracker.lastActiveDate = today;
+  saveTracker();
+  updateTrackerUI();
+}
+
+function buildShareText() {
+  return `TypewithSrujan result: ${resultWpmVal.textContent} WPM, ${resAcc.textContent} accuracy, ${resTime.textContent}.`;
+}
+
+function syncShareCard(wpm, acc, timeText) {
+  shareWpm.textContent = String(wpm);
+  shareAcc.textContent = acc + '%';
+  shareTime.textContent = timeText;
+  shareDate.textContent = new Date().toLocaleString();
+}
+
+function getShareSnapshot() {
+  return {
+    wpm: Number(resultWpmVal.textContent) || 0,
+    acc: resAcc.textContent,
+    time: resTime.textContent,
+    date: shareDate.textContent,
+    best: state.bestWpm,
+    streak: tracker?.streak || 0,
+    goal: tracker?.dailyGoal || 7,
+  };
+}
+
+function roundedRect(ctx, x, y, w, h, r) {
+  const radius = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
+  ctx.closePath();
+}
+
+function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = String(text).split(' ');
+  let line = '';
+  let currentY = y;
+  for (const word of words) {
+    const testLine = line ? `${line} ${word}` : word;
+    if (ctx.measureText(testLine).width > maxWidth && line) {
+      ctx.fillText(line, x, currentY);
+      line = word;
+      currentY += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  if (line) ctx.fillText(line, x, currentY);
+  return currentY;
+}
+
+function createShareCanvas() {
+  const { wpm, acc, time, date, best, streak, goal } = getShareSnapshot();
+  const canvas = document.createElement('canvas');
+  canvas.width = 1200;
+  canvas.height = 675;
+  const ctx = canvas.getContext('2d');
+
+  const bg = ctx.createLinearGradient(0, 0, 1200, 675);
+  bg.addColorStop(0, '#0b0e14');
+  bg.addColorStop(0.55, '#141824');
+  bg.addColorStop(1, '#0f1218');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, 1200, 675);
+
+  const glow = ctx.createRadialGradient(170, 110, 20, 170, 110, 300);
+  glow.addColorStop(0, 'rgba(232,197,71,0.42)');
+  glow.addColorStop(1, 'rgba(232,197,71,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, 1200, 675);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 6; i++) {
+    roundedRect(ctx, 840 + i * 34, 92 + (i % 2) * 18, 210, 210, 38);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = 'rgba(16,20,28,0.92)';
+  roundedRect(ctx, 70, 70, 1060, 535, 42);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(232,197,71,0.14)';
+  roundedRect(ctx, 116, 108, 156, 46, 16);
+  ctx.fill();
+  ctx.fillStyle = '#e8c547';
+  ctx.font = '700 22px Segoe UI, Arial, sans-serif';
+  ctx.fillText('⌨ TypewithSrujan', 132, 139);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '700 18px Segoe UI, Arial, sans-serif';
+  ctx.fillText('Typing result card', 118, 176);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '800 68px Segoe UI, Arial, sans-serif';
+  ctx.fillText(`${wpm}`, 118, 246);
+  ctx.font = '700 22px Segoe UI, Arial, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.78)';
+  ctx.fillText('WPM', 118, 280);
+
+  ctx.font = '600 20px Segoe UI, Arial, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.65)';
+  ctx.fillText(`Result captured ${date}`, 118, 322);
+
+  const metricY = 372;
+  const metricW = 232;
+  const metricGap = 18;
+  const metrics = [
+    { label: 'Accuracy', value: acc },
+    { label: 'Time', value: time },
+    { label: 'Best WPM', value: String(best) },
+    { label: 'Streak', value: `${streak} days / goal ${goal}` },
+  ];
+  metrics.forEach((metric, index) => {
+    const x = 118 + index * (metricW + metricGap);
+    const card = ctx.createLinearGradient(x, metricY, x + metricW, metricY + 95);
+    card.addColorStop(0, 'rgba(255,255,255,0.08)');
+    card.addColorStop(1, 'rgba(255,255,255,0.04)');
+    ctx.fillStyle = card;
+    roundedRect(ctx, x, metricY, metricW, 95, 24);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.54)';
+    ctx.font = '600 16px Segoe UI, Arial, sans-serif';
+    ctx.fillText(metric.label, x + 22, metricY + 30);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 28px Segoe UI, Arial, sans-serif';
+    drawWrappedText(ctx, metric.value, x + 22, metricY + 66, 180, 0);
+  });
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '800 22px Segoe UI, Arial, sans-serif';
+  ctx.fillText('Keep typing. Keep improving.', 118, 548);
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.font = '500 18px Segoe UI, Arial, sans-serif';
+  ctx.fillText('Built for quick sharing after every run.', 118, 580);
+
+  ctx.fillStyle = '#e8c547';
+  ctx.font = '700 18px Segoe UI, Arial, sans-serif';
+  ctx.fillText('⌨ TypewithSrujan', 906, 584);
+
+  return canvas;
+}
+
+async function canvasToBlob(canvas) {
+  return await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+}
+
+async function buildShareImageFile() {
+  const canvas = createShareCanvas();
+  const blob = await canvasToBlob(canvas);
+  if (!blob) return null;
+  return new File([blob], 'typewithsrujan-result.png', { type: 'image/png' });
+}
+
+async function downloadShareImage() {
+  const canvas = createShareCanvas();
+  const blob = await canvasToBlob(canvas);
+  if (!blob) return false;
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'typewithsrujan-result.png';
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+  return true;
+}
+
+bestWpmEl.textContent = state.bestWpm;
+renderHistory();
+renderReview([]);
+tracker = loadTracker();
+updateTrackerUI();
+
+// ── LAP HELPERS ──
+function lapEl(n) {
+  return {
+    card:  document.getElementById(`lap-${n}`),
+    wpm:   document.getElementById(`lap-wpm-${n}`),
+    badge: document.getElementById(`lap-badge-${n}`),
+    prog:  document.getElementById(`lap-prog-${n}`),
+  };
+}
+
+function resetLapUI() {
+  [1,2,3].forEach(n => {
+    const e = lapEl(n);
+    if (!e.card) return;
+    e.card.className = 'lap-card';
+    e.wpm.className = 'lap-wpm';
+    e.wpm.textContent = '—';
+    e.badge.className = 'lap-badge waiting';
+    e.badge.textContent = 'Waiting';
+    e.prog.style.width = '0%';
+    const sub = e.card.querySelector('.lap-sub');
+    if (sub) sub.innerHTML = `<span>WPM at ${n === 1 ? '60s' : n === 2 ? '120s' : '180s'}</span>`;
+  });
+}
+
+function updateLaps(elapsed) {
+  if (state.mode !== 'paragraph') return;
+  LAP_SECONDS.forEach((sec, i) => {
+    const e = lapEl(i + 1);
+    if (!e.card) return;
+    const prevSec = i === 0 ? 0 : LAP_SECONDS[i - 1];
+
+    if (state.laps[i] !== null) {
+      e.card.className = 'lap-card done';
+      e.wpm.className = 'lap-wpm done';
+      e.badge.className = 'lap-badge done';
+      e.badge.textContent = '✓ Done';
+    } else if (elapsed >= sec) {
+      const minutes = sec / 60;
+      const wpm = Math.round((state.correctChars / 5) / minutes);
+      const acc = state.charIndex > 0 ? Math.round((state.correctChars / state.charIndex) * 100) : 100;
+      state.laps[i] = wpm;
+      state.lapCorrectAtMark[i] = state.correctChars;
+      state.lapAccAtMark[i] = acc;
+      e.wpm.textContent = wpm;
+      e.card.className = 'lap-card done';
+      e.wpm.className = 'lap-wpm done';
+      e.badge.className = 'lap-badge done';
+      e.badge.textContent = '✓ Done';
+      const sub = e.card.querySelector('.lap-sub');
+      if (sub) sub.innerHTML = `<span>WPM <b>${wpm}</b></span><span>Acc <b>${acc}%</b></span>`;
+    } else if (elapsed >= prevSec) {
+      e.card.className = 'lap-card active';
+      e.wpm.className = 'lap-wpm active';
+      e.badge.className = 'lap-badge running';
+      e.badge.textContent = 'Live';
+      const minutes = elapsed / 60;
+      const wpm = minutes > 0 ? Math.round((state.correctChars / 5) / minutes) : 0;
+      e.wpm.textContent = wpm;
+      const lapDuration = sec - prevSec;
+      const lapElapsed = elapsed - prevSec;
+      const pct = Math.min(100, (lapElapsed / lapDuration) * 100);
+      e.prog.style.width = pct + '%';
+    }
+  });
+}
+
+// ── GENERATE TEXT ──
+function generateText() {
+  const bank = WORD_BANKS[state.mode];
+  if (state.mode === 'words' || state.mode === 'time') {
+    const n = state.mode === 'time' ? 80 : state.count;
+    const arr = [];
+    for (let i = 0; i < n; i++) arr.push(bank[Math.floor(Math.random() * bank.length)]);
+    return arr.join(' ');
+  } else if (state.mode === 'sentence') {
+    return bank[Math.floor(Math.random() * bank.length)];
+  } else {
+    return bank[Math.floor(Math.random() * bank.length)];
+  }
+}
+
+// ── RENDER CHARS ──
+function renderText(text) {
+  display.innerHTML = '';
+  for (let i = 0; i < text.length; i++) {
+    const span = document.createElement('span');
+    span.className = 'char';
+    span.dataset.i = i;
+    span.textContent = text[i];
+    if (i === 0) span.classList.add('current');
+    display.appendChild(span);
+  }
+  state.flatText = text;
+  state.totalChars = text.length;
+}
+
+function initTest() {
+  clearInterval(state.timerInterval);
+  const text = generateText();
+  state.charIndex = 0;
+  state.correctChars = 0;
+  state.wrongChars = 0;
+  state.started = false;
+  state.finished = false;
+  state.startTime = null;
+  state.laps = [null, null, null];
+  state.lapCorrectAtMark = [0, 0, 0];
+  state.lapAccAtMark = [0, 0, 0];
+  renderText(text);
+  hiddenInput.value = '';
+  resultOverlay.classList.remove('show');
+  typingBox.style.display = '';
+  statWpm.textContent = '0';
+  statAcc.textContent = '100%';
+  statTime.textContent = '0.0s';
+  statChars.textContent = `0/${text.length}`;
+
+  // Show/hide lap panel
+  if (state.mode === 'paragraph') {
+    lapPanel.classList.add('visible');
+    resetLapUI();
+  } else {
+    lapPanel.classList.remove('visible');
+  }
+}
+
+// ── INPUT HANDLER ──
+hiddenInput.addEventListener('input', () => {
+  if (state.finished) return;
+  const val = hiddenInput.value;
+
+  if (!state.started) {
+    state.started = true;
+    state.startTime = Date.now();
+    state.timerInterval = setInterval(updateStats, 100);
+  }
+
+  const typedLen = val.length;
+  const chars = display.querySelectorAll('.char');
+  chars.forEach(c => c.className = 'char');
+
+  let correct = 0, wrong = 0;
+  for (let i = 0; i < typedLen && i < state.flatText.length; i++) {
+    if (val[i] === state.flatText[i]) { chars[i].classList.add('correct'); correct++; }
+    else { chars[i].classList.add('wrong'); wrong++; }
+  }
+
+  state.charIndex = typedLen;
+  state.correctChars = correct;
+  state.wrongChars = wrong;
+
+  if (typedLen < state.flatText.length) chars[typedLen].classList.add('current');
+
+  updateStats();
+
+  if (typedLen >= state.flatText.length) finishTest();
+});
+
+hiddenInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Backspace' && state.finished) return;
+});
+
+function updateStats() {
+  if (!state.started) return;
+  const elapsed = (Date.now() - state.startTime) / 1000;
+  const minutes = elapsed / 60;
+  const wpm = minutes > 0 ? Math.round((state.correctChars / 5) / minutes) : 0;
+  const acc = state.charIndex > 0 ? Math.round((state.correctChars / state.charIndex) * 100) : 100;
+  statWpm.textContent = wpm;
+  statAcc.textContent = acc + '%';
+  statTime.textContent = elapsed.toFixed(1) + 's';
+  statChars.textContent = `${state.charIndex}/${state.flatText.length}`;
+
+  if (state.mode === 'paragraph') updateLaps(elapsed);
+}
+
+function finishTest() {
+  clearInterval(state.timerInterval);
+  state.finished = true;
+  const typedText = hiddenInput.value;
+  const elapsed = (Date.now() - state.startTime) / 1000;
+  const minutes = elapsed / 60;
+  const wpm = minutes > 0 ? Math.round((state.correctChars / 5) / minutes) : 0;
+  const acc = state.charIndex > 0 ? Math.round((state.correctChars / state.charIndex) * 100) : 100;
+
+  // Freeze any remaining active laps
+  if (state.mode === 'paragraph') updateLaps(elapsed);
+
+  if (wpm > state.bestWpm) {
+    state.bestWpm = wpm;
+    localStorage.setItem('tw_best', wpm);
+    bestWpmEl.textContent = wpm;
+  }
+
+  resultWpmVal.textContent = wpm;
+  resAcc.textContent = acc + '%';
+  resTime.textContent = elapsed.toFixed(1) + 's';
+  resChars.textContent = `${state.correctChars}/${state.flatText.length}`;
+  syncShareCard(wpm, acc, elapsed.toFixed(1) + 's');
+
+  const errors = [];
+  const compareLimit = Math.min(typedText.length, state.flatText.length);
+  for (let i = 0; i < compareLimit; i++) {
+    if (typedText[i] !== state.flatText[i]) {
+      errors.push({ index: i, expected: state.flatText[i], typed: typedText[i] });
+    }
+  }
+  if (typedText.length < state.flatText.length) {
+    for (let i = typedText.length; i < Math.min(state.flatText.length, typedText.length + 8); i++) {
+      errors.push({ index: i, expected: state.flatText[i], typed: ' ' });
+    }
+  }
+
+  renderReview(errors);
+  saveRun({
+    at: new Date().toISOString(),
+    mode: state.mode,
+    wpm,
+    acc,
+    time: Number(elapsed.toFixed(1)),
+    chars: state.flatText.length,
+  });
+  updateTrackerOnComplete();
+
+  setTimeout(() => {
+    typingBox.style.display = 'none';
+    resultOverlay.classList.add('show');
+  }, 200);
+}
+
+// ── FOCUS / CLICK ──
+typingBox.addEventListener('click', () => { hiddenInput.focus(); typingBox.classList.add('focused'); });
+hiddenInput.addEventListener('focus', () => typingBox.classList.add('focused'));
+hiddenInput.addEventListener('blur',  () => typingBox.classList.remove('focused'));
+document.addEventListener('keydown', (e) => {
+  if (e.target === hiddenInput) return;
+  if (['ArrowUp','ArrowDown',' '].includes(e.key)) return;
+  hiddenInput.focus();
+});
+
+// ── BUTTONS ──
+document.getElementById('restart-btn').addEventListener('click', initTest);
+document.getElementById('new-test-btn').addEventListener('click', initTest);
+shareCopyBtn.addEventListener('click', async () => {
+  const text = buildShareText();
+  try {
+    await navigator.clipboard.writeText(text);
+    shareCopyBtn.textContent = 'Copied';
+    setTimeout(() => { shareCopyBtn.textContent = 'Copy result'; }, 1200);
+  } catch {
+    shareCopyBtn.textContent = 'Copy failed';
+    setTimeout(() => { shareCopyBtn.textContent = 'Copy result'; }, 1200);
+  }
+});
+
+shareNativeBtn.addEventListener('click', async () => {
+  const text = buildShareText();
+  try {
+    const file = await buildShareImageFile();
+    if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        title: 'TypewithSrujan result',
+        text,
+        url: location.href,
+        files: [file],
+      });
+    } else if (navigator.share) {
+      await navigator.share({ title: 'TypewithSrujan result', text, url: location.href });
+    } else {
+      await navigator.clipboard.writeText(text);
+    }
+  } catch {
+    // ignore share cancellations
+  }
+});
+
+shareDownloadBtn.addEventListener('click', async () => {
+  try {
+    await downloadShareImage();
+    shareDownloadBtn.textContent = 'Downloaded';
+    setTimeout(() => { shareDownloadBtn.textContent = 'Download PNG'; }, 1200);
+  } catch {
+    shareDownloadBtn.textContent = 'Download failed';
+    setTimeout(() => { shareDownloadBtn.textContent = 'Download PNG'; }, 1200);
+  }
+});
+
+goalInput.addEventListener('change', () => {
+  const nextGoal = Math.max(1, Math.min(50, parseInt(goalInput.value || '5', 10) || 5));
+  tracker.goal = nextGoal;
+  saveTracker();
+  updateTrackerUI();
+});
+
+// ── MOBILE NAV ──
+const nav = document.getElementById('top');
+const navToggle = document.getElementById('nav-toggle');
+const navLinks = nav.querySelectorAll('.nav-links a');
+
+navToggle.addEventListener('click', () => {
+  const isOpen = nav.classList.toggle('nav-open');
+  navToggle.setAttribute('aria-expanded', String(isOpen));
+});
+
+navLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    nav.classList.remove('nav-open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  });
+});
+
+// ── MODE BUTTONS ──
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.mode = btn.dataset.mode;
+    const countRow = document.getElementById('count-row');
+    countRow.style.display = (state.mode === 'words' || state.mode === 'time') ? 'flex' : 'none';
+    initTest();
+  });
+});
+
+// ── COUNT BUTTONS ──
+document.querySelectorAll('.count-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.count = parseInt(btn.dataset.count);
+    initTest();
+  });
+});
+
+// ── FAQ ──
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.parentElement;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  });
+});
+
+// ── INIT ──
+initTest();
+</script>
+</body>
+</html>
