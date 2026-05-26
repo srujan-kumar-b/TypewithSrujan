@@ -27,6 +27,8 @@
     --font-mono: 'Space Mono', monospace;
     --font-sans: 'DM Sans', sans-serif;
     --font-serif: 'DM Serif Display', serif;
+    --key-w: 48px;
+    --key-gap: 5px;
   }
 
   html { scroll-behavior: smooth; }
@@ -61,7 +63,7 @@
 
   /* Dark green blob — sweeps left↔right across the screen */
   .bg-orb-1 {
-    width: 700px; height: 900px;
+    width: min(700px, 60vw); height: min(900px, 80vh);
     background: radial-gradient(ellipse at center,
       rgba(20, 110, 55, 0.8) 0%,
       rgba(15, 80, 38, 0.5) 40%,
@@ -72,7 +74,7 @@
 
   /* Dark red/maroon blob — sweeps right↔left, opposite phase */
   .bg-orb-2 {
-    width: 680px; height: 860px;
+    width: min(680px, 58vw); height: min(860px, 78vh);
     background: radial-gradient(ellipse at center,
       rgba(130, 20, 25, 0.8) 0%,
       rgba(95, 12, 18, 0.5) 40%,
@@ -83,7 +85,7 @@
 
   /* Green — drifts diagonally bottom */
   .bg-orb-3 {
-    width: 550px; height: 550px;
+    width: min(550px, 45vw); height: min(550px, 45vw);
     background: radial-gradient(ellipse at center,
       rgba(18, 95, 45, 0.5) 0%,
       transparent 65%);
@@ -93,7 +95,7 @@
 
   /* Red — drifts diagonally bottom right */
   .bg-orb-4 {
-    width: 500px; height: 500px;
+    width: min(500px, 40vw); height: min(500px, 40vw);
     background: radial-gradient(ellipse at center,
       rgba(100, 18, 22, 0.5) 0%,
       transparent 65%);
@@ -158,7 +160,7 @@
     width: 100%;
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 3rem;
+    padding: 0 1.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -992,9 +994,10 @@
     gap: 5px;
     margin-bottom: 5px;
     justify-content: center;
+    flex-wrap: wrap;
   }
   .key {
-    min-width: 38px;
+    min-width: 34px;
     height: 38px;
     border-radius: 6px;
     display: flex;
@@ -1007,9 +1010,11 @@
     position: relative;
     cursor: default;
     transition: transform 0.1s;
+    flex: 0 1 48px;
   }
   .key:hover { transform: translateY(-2px); }
-  .key.space { width: 280px; min-width: unset; }
+  /* make space equal to width of keys C..M (5 keys + 4 gaps) */
+  .key.space { flex: 0 0 calc((var(--key-w) * 5) + (var(--key-gap) * 4)); min-width: calc((var(--key-w) * 5) + (var(--key-gap) * 4)); max-width: calc((var(--key-w) * 5) + (var(--key-gap) * 4)); }
   .key.f0 { background: rgba(130,110,200,0.2); color: #c4b5fd; border-color: rgba(167,139,250,0.3); }
   .key.f1 { background: rgba(45,180,140,0.15); color: #6ee7b7; border-color: rgba(110,231,183,0.3); }
   .key.f2 { background: rgba(250,170,60,0.15); color: #fcd34d; border-color: rgba(252,211,77,0.3); }
@@ -1017,6 +1022,15 @@
   .key.f4 { background: rgba(80,150,255,0.15); color: #93c5fd; border-color: rgba(147,197,253,0.3); }
   .key.neutral { background: var(--bg3); color: var(--text3); }
   .key.spacebar { background: var(--bg3); color: var(--text2); }
+
+  /* ensure spacebar scales on small screens */
+  .key.spacebar { flex: 0 0 calc((var(--key-w) * 5) + (var(--key-gap) * 4)); min-width: calc((var(--key-w) * 5) + (var(--key-gap) * 4)); max-width: calc((var(--key-w) * 5) + (var(--key-gap) * 4)); }
+
+  @media (max-width: 420px) {
+    /* smaller key sizes on very small screens; compute space accordingly using 36px base */
+    .key { flex: 0 0 36px; min-width: 28px; }
+    .key.space, .key.spacebar { flex: 0 0 calc((36px * 5) + (var(--key-gap) * 4)); min-width: calc((36px * 5) + (var(--key-gap) * 4)); max-width: calc((36px * 5) + (var(--key-gap) * 4)); }
+  }
 
   .kb-legend {
     display: flex;
